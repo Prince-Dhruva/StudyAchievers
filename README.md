@@ -94,50 +94,67 @@ base64 -d credentials.b64 > credentials.json
 
 Add the following secrets to your GitHub repository (Settings > Secrets and Variables > Actions):
 
-1. `ENV_BASE64`: The base64 encoded content of your `.env` file
+1. `ENV_B64`: The base64 encoded content of your `.env` file
    - Get the content: `cat .env.b64` (macOS/Linux) or `Get-Content .env.b64` (Windows PowerShell)
    - Copy the output and add it as a secret
 
-2. `CREDENTIALS_BASE64`: The base64 encoded content of your `credentials.json` file
+2. `GSPREAD_CREDS_B64`: The base64 encoded content of your `credentials.json` file
    - Get the content: `cat credentials.b64` (macOS/Linux) or `Get-Content credentials.b64` (Windows PowerShell)
    - Copy the output and add it as a secret
 
-These secrets can be used in GitHub Actions workflows like this:
+### Setting up GitHub Actions Workflow
 
+1. Create the workflow directory:
+```bash
+mkdir -p .github/workflows
+```
+
+2. Create the workflow file:
+```bash
+touch .github/workflows/run-sheet.yaml
+```
+
+3. Copy the following content into `run-sheet.yaml`:
 ```yaml
-name: Deploy or Run Script
+name: Run main.py
 
 on:
-  push:
-    branches: [ main ]
-  schedule:
-    - cron: '0 0 * * *'  # Runs daily at midnight UTC
+  workflow_dispatch:  # adds "Run workflow" button in GitHub
 
 jobs:
-  deploy:
+  run-script:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Decode .env from GitHub Secret
+        run: echo "${{ secrets.ENV_B64 }}" | base64 -d > .env
+
+      - name: Decode credentials.json from GitHub Secret
+        run: echo "${{ secrets.GSPREAD_CREDS_B64 }}" | base64 -d > credentials.json
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
-
-      - name: Decode Configuration Files
-        run: |
-          echo "${{ secrets.ENV_BASE64 }}" | base64 -d > .env
-          echo "${{ secrets.CREDENTIALS_BASE64 }}" | base64 -d > credentials.json
-        shell: bash
+          python-version: '3.10'
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
-      - name: Run script
+      - name: Run main.py
         run: python main.py
 ```
+
+4. Commit and push the workflow file:
+```bash
+git add .github/workflows/run-sheet.yaml
+git commit -m "Add GitHub Actions workflow"
+git push
+```
+
+The workflow will be available in your GitHub repository under the "Actions" tab. You can manually trigger it using the "Run workflow" button.
 
 ## Usage
 
