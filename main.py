@@ -44,7 +44,7 @@ def main(ssName:list,sheet,rankListName:list,row1,row2:list,col1,col2):
             message += f"{i+1}: {key} scored {value}\n"
             i+=1
         print("Message written",flush=True)
-        message+="-----X-----X-----X-----X"
+        message+="-----X-----X-----X-----X\n"
         print(message,flush=True)
     account_sid = os.getenv("TWILIO_SID")
     auth_token = os.getenv("TWILIO_TOKEN")
@@ -53,7 +53,8 @@ def main(ssName:list,sheet,rankListName:list,row1,row2:list,col1,col2):
     print("Message ready to send")
 
     client = Client(account_sid,auth_token)
-    client.messages.create(body=message,from_=from_number,to=to_number)
+    print(client,flush=True)
+    client.messages.create(body=message,from_='whatsapp:'+from_number,to='whatsapp:'+to_number)
     print("Message sent",flush=True)
 
 if __name__ == '__main__':

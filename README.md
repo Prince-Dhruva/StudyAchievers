@@ -58,18 +58,18 @@ The project uses base64 encoding for secure storage of configuration files. Here
 
 1. Generate base64 for `.env`:
 ```bash
-base64 .env > .env.b64
+base64 -i .env -o .env.b64
 ```
 
 2. Generate base64 for `credentials.json`:
 ```bash
-base64 credentials.json > credentials.b64
+base64 -i credentials.json -o credentials.b64
 ```
 
 3. To decode when needed:
 ```bash
-base64 -d .env.b64 > .env
-base64 -d credentials.b64 > credentials.json
+base64 -d -i .env.b64 -o .env
+base64 -d -i credentials.b64 -o credentials.json
 ```
 
 #### For Windows (PowerShell):
