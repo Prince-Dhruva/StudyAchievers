@@ -33,9 +33,8 @@ try:
     for idx, cell_date in enumerate(date_row):
         try:
             formatted_date = cell_date[5:7]
-            flag = 1 if cell_date[0:3]=='Mon' else 0
             print(formatted_date)
-            if int(formatted_date) == int(today_str):
+            if int(formatted_date) == int(today_str)-1:
                 todayDateInd = idx + 2  # Adjusting for actual column index
                 break
         except ValueError:
@@ -45,11 +44,7 @@ try:
         print("Today's date not found in the template sheet.")
     else:
         print(f"Found today's column index: {todayDateInd + 1}")
-        if not flag:
-            todayDateInd-=1
-        else:
-            spScore,stScore,todayDateInd=32,35,8
-
+        
         data = dict()
         sanatanGrp = ['Prince Pr', 'Raghav Pr', 'Sahil Pr', 'Shashank Pr', 'Varun Pr', 'Vishal Pr']
         rupaGrp = ['Basavesh Pr', 'Nandish Pr', 'Manjunath Pr', 'Nishant Pr']
